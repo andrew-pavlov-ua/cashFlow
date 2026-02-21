@@ -5,12 +5,14 @@ import (
 	"github.com/andrew-pavlov-ua/pkg/amqp"
 	"github.com/andrew-pavlov-ua/pkg/logger"
 	"github.com/andrew-pavlov-ua/pkg/models"
+	"github.com/andrew-pavlov-ua/services/api-gateway/internal/clients"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
 	RabbitMQPublisher *amqp.RabbitMQPublisher
+	Service           *clients.MonoClient
 }
 
 func NewHandler(amqpDSN string) *Handler {
@@ -21,6 +23,7 @@ func NewHandler(amqpDSN string) *Handler {
 
 	return &Handler{
 		RabbitMQPublisher: publisher,
+		Service:           clients.NewMonoClient(),
 	}
 }
 
@@ -35,7 +38,7 @@ func (h *Handler) NewTransaction(c *gin.Context) {
 	msg := utils.TransactionRequestToProto(&req)
 
 	// Publish the transaction to RabbitMQ
-	err := h.RabbitMQPublisher.Publish(amqp.Exchange, msg)
+	err := h.RabbitMQPublisher.Publish(amqp.EXCHANGE, msg)
 	if err != nil {
 		logger.Error("Failed to publish transaction", err)
 		c.JSON(500, gin.H{"error": "Failed to process transaction"})
@@ -44,4 +47,11 @@ func (h *Handler) NewTransaction(c *gin.Context) {
 
 	logger.Info("Transaction processed successfully")
 	c.JSON(200, gin.H{"status": "Transaction processed successfully"})
+}
+
+func (h *Handler) InitUser(mono_token string) error {
+	// TODO
+
+	logger.Infof("Initializing user with mono_token: %s", mono_token)
+	return nil
 }

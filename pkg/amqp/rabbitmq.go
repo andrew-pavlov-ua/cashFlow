@@ -17,7 +17,9 @@ type RabbitMQPublisher struct {
 	channel *amqp.Channel
 }
 
-const Exchange = "transactions"
+const EXCHANGE = "events"
+const TransactionRoutingKey = "transaction.create"
+const AccountRoutingKey = "account.init"
 
 func NewRabbitMQPublisher(amqpDSN string) (*RabbitMQPublisher, error) {
 	logger.Info("Connecting to RabbitMQ...")
@@ -33,8 +35,9 @@ func NewRabbitMQPublisher(amqpDSN string) (*RabbitMQPublisher, error) {
 		return nil, err
 	}
 
+	// exchange declaration
 	err = ch.ExchangeDeclare(
-		Exchange, // name
+		EXCHANGE, // name
 		"topic",  // type
 		true,     // durable
 		false,    // auto-deleted
@@ -44,9 +47,10 @@ func NewRabbitMQPublisher(amqpDSN string) (*RabbitMQPublisher, error) {
 	)
 	if err != nil {
 		logger.Panic("panic during declaring ampq Exchange", err)
+		return nil, err
 	}
 
-	logger.Info("--- RabbitMQ Exchanges declared successfully ---")
+	logger.Info("--- RabbitMQ Exchanges and Queues declared successfully ---")
 
 	return &RabbitMQPublisher{
 		conn:    conn,
@@ -66,7 +70,7 @@ func (p *RabbitMQPublisher) Publish(routingKey string, msg proto.Message) error 
 
 	err = p.channel.PublishWithContext(
 		ctx,
-		Exchange,   // Exchange
+		EXCHANGE,   // EXCHANGE
 		routingKey, // routing key
 		false,      // mandatory
 		false,      // immediate
@@ -82,7 +86,7 @@ func (p *RabbitMQPublisher) Publish(routingKey string, msg proto.Message) error 
 		// Check specific error types
 		if errors.Is(err, context.DeadlineExceeded) {
 			logger.Errorw("Publish timeout - RabbitMQ not responding in time",
-				"Exchange", Exchange,
+				"exchange", EXCHANGE,
 				"routing_key", routingKey,
 				"error", err,
 			)
@@ -91,7 +95,7 @@ func (p *RabbitMQPublisher) Publish(routingKey string, msg proto.Message) error 
 
 		if errors.Is(err, context.Canceled) {
 			logger.Warnw("Publish cancelled",
-				"Exchange", Exchange,
+				"exchange", EXCHANGE,
 				"routing_key", routingKey,
 			)
 			return fmt.Errorf("publish cancelled: %w", err)
@@ -99,14 +103,14 @@ func (p *RabbitMQPublisher) Publish(routingKey string, msg proto.Message) error 
 
 		// Other errors (connection closed, etc)
 		logger.Errorw("Failed to publish message",
-			"Exchange", Exchange,
+			"exchange", EXCHANGE,
 			"routing_key", routingKey,
 			"error", err,
 		)
 		return fmt.Errorf("failed to publish: %w", err)
 	}
 
-	logger.Debugf("Published to Exchange=%s, routingKey=%s", Exchange, routingKey)
+	logger.Debugf("Published to EXCHANGE=%s, routingKey=%s", EXCHANGE, routingKey)
 	return nil
 }
 

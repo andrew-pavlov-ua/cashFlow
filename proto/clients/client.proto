@@ -1,25 +1,25 @@
 syntax = "proto3";
 
-package account;
+package client;
 
-option go_package = "github.com/andrew-pavlov-ua/proto/account;account";
+option go_package = "github.com/andrew-pavlov-ua/proto/client;client";
 
-service AccountService {
-    rpc InitAccount(InitAccountRequest) returns (AccountResponse);
-    rpc SaveAccount(SaveAccountRequest) returns (AccountResponse);
+service ClientService {
+    rpc Initclient(InitClientRequest) returns (ClientResponse);
+    rpc Saveclient(SaveClientRequest) returns (ClientResponse);
 }
 
-message SaveAccountRequest {
-    Account account = 1;
+message SaveClientRequest {
+    Client client = 1;
 }
 
-message InitAccountRequest {
+message InitClientRequest {
     string mono_token = 1;
 }
 
-message AccountResponse {
+message ClientResponse {
     bool success = 1;
-    string error = 2;
+    string message = 2;
 }
 
 // Transaction event from webhook

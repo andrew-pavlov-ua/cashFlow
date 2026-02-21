@@ -19,14 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TransactionService_CreateTransaction_FullMethodName = "/transaction.TransactionService/CreateTransaction"
+	TransactionService_SaveTransaction_FullMethodName = "/transaction.TransactionService/SaveTransaction"
 )
 
 // TransactionServiceClient is the client API for TransactionService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TransactionServiceClient interface {
-	CreateTransaction(ctx context.Context, in *CreateTransactionRequest, opts ...grpc.CallOption) (*CreateTransactionResponse, error)
+	SaveTransaction(ctx context.Context, in *SaveTransactionRequest, opts ...grpc.CallOption) (*SaveTransactionResponse, error)
 }
 
 type transactionServiceClient struct {
@@ -37,10 +37,10 @@ func NewTransactionServiceClient(cc grpc.ClientConnInterface) TransactionService
 	return &transactionServiceClient{cc}
 }
 
-func (c *transactionServiceClient) CreateTransaction(ctx context.Context, in *CreateTransactionRequest, opts ...grpc.CallOption) (*CreateTransactionResponse, error) {
+func (c *transactionServiceClient) SaveTransaction(ctx context.Context, in *SaveTransactionRequest, opts ...grpc.CallOption) (*SaveTransactionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateTransactionResponse)
-	err := c.cc.Invoke(ctx, TransactionService_CreateTransaction_FullMethodName, in, out, cOpts...)
+	out := new(SaveTransactionResponse)
+	err := c.cc.Invoke(ctx, TransactionService_SaveTransaction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (c *transactionServiceClient) CreateTransaction(ctx context.Context, in *Cr
 // All implementations must embed UnimplementedTransactionServiceServer
 // for forward compatibility.
 type TransactionServiceServer interface {
-	CreateTransaction(context.Context, *CreateTransactionRequest) (*CreateTransactionResponse, error)
+	SaveTransaction(context.Context, *SaveTransactionRequest) (*SaveTransactionResponse, error)
 	mustEmbedUnimplementedTransactionServiceServer()
 }
 
@@ -62,8 +62,8 @@ type TransactionServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedTransactionServiceServer struct{}
 
-func (UnimplementedTransactionServiceServer) CreateTransaction(context.Context, *CreateTransactionRequest) (*CreateTransactionResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method CreateTransaction not implemented")
+func (UnimplementedTransactionServiceServer) SaveTransaction(context.Context, *SaveTransactionRequest) (*SaveTransactionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SaveTransaction not implemented")
 }
 func (UnimplementedTransactionServiceServer) mustEmbedUnimplementedTransactionServiceServer() {}
 func (UnimplementedTransactionServiceServer) testEmbeddedByValue()                            {}
@@ -86,20 +86,20 @@ func RegisterTransactionServiceServer(s grpc.ServiceRegistrar, srv TransactionSe
 	s.RegisterService(&TransactionService_ServiceDesc, srv)
 }
 
-func _TransactionService_CreateTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateTransactionRequest)
+func _TransactionService_SaveTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveTransactionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TransactionServiceServer).CreateTransaction(ctx, in)
+		return srv.(TransactionServiceServer).SaveTransaction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TransactionService_CreateTransaction_FullMethodName,
+		FullMethod: TransactionService_SaveTransaction_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).CreateTransaction(ctx, req.(*CreateTransactionRequest))
+		return srv.(TransactionServiceServer).SaveTransaction(ctx, req.(*SaveTransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -112,8 +112,8 @@ var TransactionService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*TransactionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateTransaction",
-			Handler:    _TransactionService_CreateTransaction_Handler,
+			MethodName: "SaveTransaction",
+			Handler:    _TransactionService_SaveTransaction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

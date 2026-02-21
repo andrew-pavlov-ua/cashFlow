@@ -20,8 +20,8 @@ func Getenv(key, defaultValue string) string {
 	return value
 }
 
-func TransactionRequestToProto(req *models.TransactionRequest) *pb.TransactionCreated {
-	msg := &pb.TransactionCreated{
+func TransactionRequestToProto(req *models.TransactionRequest) *pb.Transaction {
+	msg := &pb.Transaction{
 		ExternalId:      req.ExternalId,
 		Amount:          req.Amount,
 		CurrencyCode:    req.CurrencyCode,

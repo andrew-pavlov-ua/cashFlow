@@ -21,7 +21,7 @@ generate-proto:
 clean-proto:
 	@echo "Cleaning generated proto files..."
 	rm -f proto/transactions/*.pb.go
-	rm -f proto/events/*.pb.go
+	rm -f proto/clients/*.pb.go
 	@echo "✓ Cleaned"
 
 install-proto-tools:

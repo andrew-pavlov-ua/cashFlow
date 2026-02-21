@@ -1,25 +1,28 @@
 package server
 
 import (
-	pb "github.com/andrew-pavlov-ua/proto/accounts" // accounts grpc proto package
+	"context"
+
+	pb "github.com/andrew-pavlov-ua/proto/clients" // accounts grpc proto package
 	"github.com/andrew-pavlov-ua/services/api-gateway/internal/handler"
-	"github.com/andrew-pavlov-ua/services/api-gateway/internal/services"
 	"google.golang.org/grpc"
 )
 
 type GRPCServer struct {
-	AccountService *services.AccountService
+	pb.UnimplementedClientServiceServer
+
+	Handler *handler.Handler
 }
 
 // NewGRPCServer initializes and returns a new GRPCServer instance
 func NewGRPCServer(handler *handler.Handler) *GRPCServer {
 	return &GRPCServer{
-		AccountService: services.NewAccountService(handler),
+		Handler: handler,
 	}
 }
 
 func (s *GRPCServer) RegisterServices(grpcServer *grpc.Server) {
-	pb.RegisterAccountServiceServer(grpcServer, s.AccountService)
+	pb.RegisterClientServiceServer(grpcServer, s)
 }
 
 // Start starts the gRPC server
@@ -33,6 +36,12 @@ func (s *GRPCServer) Stop() {
 }
 
 // Stop gracefully stops the gRPC server
-func (s *GRPCServer) InitUser() {
+func (s *GRPCServer) InitUser(_ context.Context, mono_token string) (*pb.ClientResponse, error) {
+	// Call the handler to initialize the user
+	s.Handler.InitUser(mono_token)
 
+	return &pb.ClientResponse{
+		Success: true,
+		Message: "User initialized successfully",
+	}, nil
 }

@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v6.33.1
-// source: proto/accounts/account.proto
+// source: proto/clients/client.proto
 
-package account
+package client
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -21,28 +21,28 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type SaveAccountRequest struct {
+type SaveClientRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Account       *Account               `protobuf:"bytes,1,opt,name=account,proto3" json:"account,omitempty"`
+	Client        *Client                `protobuf:"bytes,1,opt,name=client,proto3" json:"client,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SaveAccountRequest) Reset() {
-	*x = SaveAccountRequest{}
-	mi := &file_proto_accounts_account_proto_msgTypes[0]
+func (x *SaveClientRequest) Reset() {
+	*x = SaveClientRequest{}
+	mi := &file_proto_clients_client_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SaveAccountRequest) String() string {
+func (x *SaveClientRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SaveAccountRequest) ProtoMessage() {}
+func (*SaveClientRequest) ProtoMessage() {}
 
-func (x *SaveAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_accounts_account_proto_msgTypes[0]
+func (x *SaveClientRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_clients_client_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -53,40 +53,40 @@ func (x *SaveAccountRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SaveAccountRequest.ProtoReflect.Descriptor instead.
-func (*SaveAccountRequest) Descriptor() ([]byte, []int) {
-	return file_proto_accounts_account_proto_rawDescGZIP(), []int{0}
+// Deprecated: Use SaveClientRequest.ProtoReflect.Descriptor instead.
+func (*SaveClientRequest) Descriptor() ([]byte, []int) {
+	return file_proto_clients_client_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *SaveAccountRequest) GetAccount() *Account {
+func (x *SaveClientRequest) GetClient() *Client {
 	if x != nil {
-		return x.Account
+		return x.Client
 	}
 	return nil
 }
 
-type InitAccountRequest struct {
+type InitClientRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	MonoToken     string                 `protobuf:"bytes,1,opt,name=mono_token,json=monoToken,proto3" json:"mono_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *InitAccountRequest) Reset() {
-	*x = InitAccountRequest{}
-	mi := &file_proto_accounts_account_proto_msgTypes[1]
+func (x *InitClientRequest) Reset() {
+	*x = InitClientRequest{}
+	mi := &file_proto_clients_client_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *InitAccountRequest) String() string {
+func (x *InitClientRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*InitAccountRequest) ProtoMessage() {}
+func (*InitClientRequest) ProtoMessage() {}
 
-func (x *InitAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_accounts_account_proto_msgTypes[1]
+func (x *InitClientRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_clients_client_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -97,41 +97,41 @@ func (x *InitAccountRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use InitAccountRequest.ProtoReflect.Descriptor instead.
-func (*InitAccountRequest) Descriptor() ([]byte, []int) {
-	return file_proto_accounts_account_proto_rawDescGZIP(), []int{1}
+// Deprecated: Use InitClientRequest.ProtoReflect.Descriptor instead.
+func (*InitClientRequest) Descriptor() ([]byte, []int) {
+	return file_proto_clients_client_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *InitAccountRequest) GetMonoToken() string {
+func (x *InitClientRequest) GetMonoToken() string {
 	if x != nil {
 		return x.MonoToken
 	}
 	return ""
 }
 
-type AccountResponse struct {
+type ClientResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	Error         string                 `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AccountResponse) Reset() {
-	*x = AccountResponse{}
-	mi := &file_proto_accounts_account_proto_msgTypes[2]
+func (x *ClientResponse) Reset() {
+	*x = ClientResponse{}
+	mi := &file_proto_clients_client_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AccountResponse) String() string {
+func (x *ClientResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AccountResponse) ProtoMessage() {}
+func (*ClientResponse) ProtoMessage() {}
 
-func (x *AccountResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_accounts_account_proto_msgTypes[2]
+func (x *ClientResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_clients_client_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -142,21 +142,21 @@ func (x *AccountResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AccountResponse.ProtoReflect.Descriptor instead.
-func (*AccountResponse) Descriptor() ([]byte, []int) {
-	return file_proto_accounts_account_proto_rawDescGZIP(), []int{2}
+// Deprecated: Use ClientResponse.ProtoReflect.Descriptor instead.
+func (*ClientResponse) Descriptor() ([]byte, []int) {
+	return file_proto_clients_client_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *AccountResponse) GetSuccess() bool {
+func (x *ClientResponse) GetSuccess() bool {
 	if x != nil {
 		return x.Success
 	}
 	return false
 }
 
-func (x *AccountResponse) GetError() string {
+func (x *ClientResponse) GetMessage() string {
 	if x != nil {
-		return x.Error
+		return x.Message
 	}
 	return ""
 }
@@ -176,7 +176,7 @@ type Account struct {
 
 func (x *Account) Reset() {
 	*x = Account{}
-	mi := &file_proto_accounts_account_proto_msgTypes[3]
+	mi := &file_proto_clients_client_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -188,7 +188,7 @@ func (x *Account) String() string {
 func (*Account) ProtoMessage() {}
 
 func (x *Account) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_accounts_account_proto_msgTypes[3]
+	mi := &file_proto_clients_client_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -201,7 +201,7 @@ func (x *Account) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Account.ProtoReflect.Descriptor instead.
 func (*Account) Descriptor() ([]byte, []int) {
-	return file_proto_accounts_account_proto_rawDescGZIP(), []int{3}
+	return file_proto_clients_client_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Account) GetSource() string {
@@ -260,7 +260,7 @@ type Jar struct {
 
 func (x *Jar) Reset() {
 	*x = Jar{}
-	mi := &file_proto_accounts_account_proto_msgTypes[4]
+	mi := &file_proto_clients_client_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -272,7 +272,7 @@ func (x *Jar) String() string {
 func (*Jar) ProtoMessage() {}
 
 func (x *Jar) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_accounts_account_proto_msgTypes[4]
+	mi := &file_proto_clients_client_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -285,7 +285,7 @@ func (x *Jar) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Jar.ProtoReflect.Descriptor instead.
 func (*Jar) Descriptor() ([]byte, []int) {
-	return file_proto_accounts_account_proto_rawDescGZIP(), []int{4}
+	return file_proto_clients_client_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Jar) GetExternalId() string {
@@ -343,7 +343,7 @@ type Client struct {
 
 func (x *Client) Reset() {
 	*x = Client{}
-	mi := &file_proto_accounts_account_proto_msgTypes[5]
+	mi := &file_proto_clients_client_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -355,7 +355,7 @@ func (x *Client) String() string {
 func (*Client) ProtoMessage() {}
 
 func (x *Client) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_accounts_account_proto_msgTypes[5]
+	mi := &file_proto_clients_client_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -368,7 +368,7 @@ func (x *Client) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Client.ProtoReflect.Descriptor instead.
 func (*Client) Descriptor() ([]byte, []int) {
-	return file_proto_accounts_account_proto_rawDescGZIP(), []int{5}
+	return file_proto_clients_client_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Client) GetSource() string {
@@ -406,19 +406,19 @@ func (x *Client) GetJars() []*Jar {
 	return nil
 }
 
-var File_proto_accounts_account_proto protoreflect.FileDescriptor
+var File_proto_clients_client_proto protoreflect.FileDescriptor
 
-const file_proto_accounts_account_proto_rawDesc = "" +
+const file_proto_clients_client_proto_rawDesc = "" +
 	"\n" +
-	"\x1cproto/accounts/account.proto\x12\aaccount\"@\n" +
-	"\x12SaveAccountRequest\x12*\n" +
-	"\aaccount\x18\x01 \x01(\v2\x10.account.AccountR\aaccount\"3\n" +
-	"\x12InitAccountRequest\x12\x1d\n" +
+	"\x1aproto/clients/client.proto\x12\x06client\";\n" +
+	"\x11SaveClientRequest\x12&\n" +
+	"\x06client\x18\x01 \x01(\v2\x0e.client.ClientR\x06client\"2\n" +
+	"\x11InitClientRequest\x12\x1d\n" +
 	"\n" +
-	"mono_token\x18\x01 \x01(\tR\tmonoToken\"A\n" +
-	"\x0fAccountResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x14\n" +
-	"\x05error\x18\x02 \x01(\tR\x05error\"\xa7\x01\n" +
+	"mono_token\x18\x01 \x01(\tR\tmonoToken\"D\n" +
+	"\x0eClientResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xa7\x01\n" +
 	"\aAccount\x12\x16\n" +
 	"\x06source\x18\x01 \x01(\tR\x06source\x12\x1f\n" +
 	"\vexternal_id\x18\x02 \x01(\tR\n" +
@@ -434,47 +434,49 @@ const file_proto_accounts_account_proto_rawDesc = "" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12#\n" +
 	"\rcurrency_code\x18\x04 \x01(\x05R\fcurrencyCode\x12\x18\n" +
 	"\abalance\x18\x05 \x01(\x03R\abalance\x12\x12\n" +
-	"\x04goal\x18\x06 \x01(\x03R\x04goal\"\xa5\x01\n" +
+	"\x04goal\x18\x06 \x01(\x03R\x04goal\"\xa3\x01\n" +
 	"\x06Client\x12\x16\n" +
 	"\x06source\x18\x01 \x01(\tR\x06source\x12\x1f\n" +
 	"\vexternal_id\x18\x02 \x01(\tR\n" +
 	"externalId\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\x12,\n" +
-	"\baccounts\x18\x04 \x03(\v2\x10.account.AccountR\baccounts\x12 \n" +
-	"\x04jars\x18\x05 \x03(\v2\f.account.JarR\x04jars2\x9c\x01\n" +
-	"\x0eAccountService\x12D\n" +
-	"\vInitAccount\x12\x1b.account.InitAccountRequest\x1a\x18.account.AccountResponse\x12D\n" +
-	"\vSaveAccount\x12\x1b.account.SaveAccountRequest\x1a\x18.account.AccountResponseB3Z1github.com/andrew-pavlov-ua/proto/account;accountb\x06proto3"
+	"\x04name\x18\x03 \x01(\tR\x04name\x12+\n" +
+	"\baccounts\x18\x04 \x03(\v2\x0f.client.AccountR\baccounts\x12\x1f\n" +
+	"\x04jars\x18\x05 \x03(\v2\v.client.JarR\x04jars2\x91\x01\n" +
+	"\rClientService\x12?\n" +
+	"\n" +
+	"Initclient\x12\x19.client.InitClientRequest\x1a\x16.client.ClientResponse\x12?\n" +
+	"\n" +
+	"Saveclient\x12\x19.client.SaveClientRequest\x1a\x16.client.ClientResponseB1Z/github.com/andrew-pavlov-ua/proto/client;clientb\x06proto3"
 
 var (
-	file_proto_accounts_account_proto_rawDescOnce sync.Once
-	file_proto_accounts_account_proto_rawDescData []byte
+	file_proto_clients_client_proto_rawDescOnce sync.Once
+	file_proto_clients_client_proto_rawDescData []byte
 )
 
-func file_proto_accounts_account_proto_rawDescGZIP() []byte {
-	file_proto_accounts_account_proto_rawDescOnce.Do(func() {
-		file_proto_accounts_account_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_accounts_account_proto_rawDesc), len(file_proto_accounts_account_proto_rawDesc)))
+func file_proto_clients_client_proto_rawDescGZIP() []byte {
+	file_proto_clients_client_proto_rawDescOnce.Do(func() {
+		file_proto_clients_client_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_clients_client_proto_rawDesc), len(file_proto_clients_client_proto_rawDesc)))
 	})
-	return file_proto_accounts_account_proto_rawDescData
+	return file_proto_clients_client_proto_rawDescData
 }
 
-var file_proto_accounts_account_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
-var file_proto_accounts_account_proto_goTypes = []any{
-	(*SaveAccountRequest)(nil), // 0: account.SaveAccountRequest
-	(*InitAccountRequest)(nil), // 1: account.InitAccountRequest
-	(*AccountResponse)(nil),    // 2: account.AccountResponse
-	(*Account)(nil),            // 3: account.Account
-	(*Jar)(nil),                // 4: account.Jar
-	(*Client)(nil),             // 5: account.Client
+var file_proto_clients_client_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_proto_clients_client_proto_goTypes = []any{
+	(*SaveClientRequest)(nil), // 0: client.SaveClientRequest
+	(*InitClientRequest)(nil), // 1: client.InitClientRequest
+	(*ClientResponse)(nil),    // 2: client.ClientResponse
+	(*Account)(nil),           // 3: client.Account
+	(*Jar)(nil),               // 4: client.Jar
+	(*Client)(nil),            // 5: client.Client
 }
-var file_proto_accounts_account_proto_depIdxs = []int32{
-	3, // 0: account.SaveAccountRequest.account:type_name -> account.Account
-	3, // 1: account.Client.accounts:type_name -> account.Account
-	4, // 2: account.Client.jars:type_name -> account.Jar
-	1, // 3: account.AccountService.InitAccount:input_type -> account.InitAccountRequest
-	0, // 4: account.AccountService.SaveAccount:input_type -> account.SaveAccountRequest
-	2, // 5: account.AccountService.InitAccount:output_type -> account.AccountResponse
-	2, // 6: account.AccountService.SaveAccount:output_type -> account.AccountResponse
+var file_proto_clients_client_proto_depIdxs = []int32{
+	5, // 0: client.SaveClientRequest.client:type_name -> client.Client
+	3, // 1: client.Client.accounts:type_name -> client.Account
+	4, // 2: client.Client.jars:type_name -> client.Jar
+	1, // 3: client.ClientService.Initclient:input_type -> client.InitClientRequest
+	0, // 4: client.ClientService.Saveclient:input_type -> client.SaveClientRequest
+	2, // 5: client.ClientService.Initclient:output_type -> client.ClientResponse
+	2, // 6: client.ClientService.Saveclient:output_type -> client.ClientResponse
 	5, // [5:7] is the sub-list for method output_type
 	3, // [3:5] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name
@@ -482,26 +484,26 @@ var file_proto_accounts_account_proto_depIdxs = []int32{
 	0, // [0:3] is the sub-list for field type_name
 }
 
-func init() { file_proto_accounts_account_proto_init() }
-func file_proto_accounts_account_proto_init() {
-	if File_proto_accounts_account_proto != nil {
+func init() { file_proto_clients_client_proto_init() }
+func file_proto_clients_client_proto_init() {
+	if File_proto_clients_client_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_accounts_account_proto_rawDesc), len(file_proto_accounts_account_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_clients_client_proto_rawDesc), len(file_proto_clients_client_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_proto_accounts_account_proto_goTypes,
-		DependencyIndexes: file_proto_accounts_account_proto_depIdxs,
-		MessageInfos:      file_proto_accounts_account_proto_msgTypes,
+		GoTypes:           file_proto_clients_client_proto_goTypes,
+		DependencyIndexes: file_proto_clients_client_proto_depIdxs,
+		MessageInfos:      file_proto_clients_client_proto_msgTypes,
 	}.Build()
-	File_proto_accounts_account_proto = out.File
-	file_proto_accounts_account_proto_goTypes = nil
-	file_proto_accounts_account_proto_depIdxs = nil
+	File_proto_clients_client_proto = out.File
+	file_proto_clients_client_proto_goTypes = nil
+	file_proto_clients_client_proto_depIdxs = nil
 }

@@ -1,12 +1,12 @@
 package services
 
 import (
-	pb "github.com/andrew-pavlov-ua/proto/accounts"
+	pb "github.com/andrew-pavlov-ua/proto/clients" // accounts grpc proto package
 	"github.com/andrew-pavlov-ua/services/api-gateway/internal/handler"
 )
 
 type AccountService struct {
-	pb.UnimplementedAccountServiceServer
+	pb.UnimplementedClientServiceServer
 
 	Handler *handler.Handler
 }
