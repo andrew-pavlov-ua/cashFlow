@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package account;
+
+option go_package = "github.com/andrew-pavlov-ua/proto/account;account";
+
+service AccountService {
+    rpc InitAccount(InitAccountRequest) returns (AccountResponse);
+    rpc SaveAccount(SaveAccountRequest) returns (AccountResponse);
+}
+
+message SaveAccountRequest {
+    Account account = 1;
+}
+
+message InitAccountRequest {
+    string mono_token = 1;
+}
+
+message AccountResponse {
+    bool success = 1;
+    string error = 2;
+}
+
+// Transaction event from webhook
+message Account {
+    string source = 1;           // "monobank", "privatbank"
+    string external_id = 2;
+    int32 currency_code = 3;     // 980 (UAH), 840 (USD)
+    int64 balance = 4;            // in kopiykas/cents
+    string l4d = 5;         // last 4 card's digits
+    string name = 6;
+}
+
+message Jar {
+    string external_id = 1;
+    string title = 2; 
+    string description = 3;
+    int32 currency_code = 4;
+    int64 balance = 5;
+    int64 goal = 6;
+}
+
+message Client {
+    string source = 1;           // "monobank", "privatbank"
+    string external_id = 2;
+    string name = 3;
+    repeated Account accounts = 4;
+    repeated Jar jars = 5; 
+}

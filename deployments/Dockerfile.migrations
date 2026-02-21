@@ -1,0 +1,11 @@
+FROM alpine:latest
+
+# Install goose
+RUN apk add --no-cache curl bash postgresql-client && \
+    curl -fsSL https://raw.githubusercontent.com/pressly/goose/master/install.sh | sh
+
+WORKDIR /migrations
+
+COPY ./migrations /migrations
+
+ENTRYPOINT ["goose"]

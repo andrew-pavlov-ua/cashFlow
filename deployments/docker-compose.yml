@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  # RabbitMQ - Message Broker
+  rabbitmq:
+    image: rabbitmq:alpine
+    container_name: cashflow-rabbitmq
+    restart: always
+    ports:
+      - "${AMQP_PORT}:5672"    # AMQP protocol
+      - "15672:15672"  # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: ${AMQP_USER}
+      RABBITMQ_DEFAULT_PASS: ${AMQP_PASS}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PostgreSQL - Main Database
+  postgres:
+    image: postgres:alpine
+    container_name: cashflow-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: cashflow
+      POSTGRES_USER: cashflow
+      POSTGRES_PASSWORD: cashflow123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cashflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis - Caching
+  redis:
+    image: redis:alpine
+    container_name: cashflow-redis
+    ports:
+      - "${RD_PORT}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Migration runner
+  migrations:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrations
+    container_name: cashflow-migrations
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - GOOSE_DRIVER=postgres
+      - GOOSE_DBSTRING=${PG_DSN}
+    command: ["postgres", "${PG_DSN}", "up"]
+    restart: "no"
+
+  api-gateway:
+    build: 
+      context: ../services/api-gateway
+      dockerfile: Dockerfile
+    container_name: cashflow-api-gateway
+    ports:
+      - "${GATEWAY_REST_PORT}:8080" # API Gateway port
+      - "${GATEWAY_GRPC_PORT}:50051" # API Gateway gRPC port
+    environment:
+      PG_DSN: ${PG_DSN}
+      RD_HOST: ${RD_HOST}
+      RD_PORT: ${RD_PORT}
+      AMQP_DSN: ${AMQP_DSN}
+      MONO_TOKEN: ${MONO_TOKEN}
+      ENV: ${ENV}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  configs:
+  rabbitmq-plugins:
+    content: "[rabbitmq_management]." 
+
+volumes:
+  rabbitmq_data:
+  postgres_data:
+  redis_data:
