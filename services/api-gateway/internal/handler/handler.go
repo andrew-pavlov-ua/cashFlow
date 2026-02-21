@@ -49,9 +49,15 @@ func (h *Handler) NewTransaction(c *gin.Context) {
 	c.JSON(200, gin.H{"status": "Transaction processed successfully"})
 }
 
-func (h *Handler) InitUser(mono_token string) error {
-	// TODO
+func (h *Handler) InitClient(mono_token string) error {
+	clientData, err := h.Service.FetchClient(mono_token)
+	if err != nil {
+		return err
+	}
+	clientData.Source = models.MONOBANK_SOURCE
 
-	logger.Infof("Initializing user with mono_token: %s", mono_token)
+	h.RabbitMQPublisher.Publish(amqp.ClientRoutingKey, utils.ClientToProto(clientData))
+
+	logger.Infof("Initializing client with mono_token: %s", mono_token)
 	return nil
 }

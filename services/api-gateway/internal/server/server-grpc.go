@@ -36,12 +36,18 @@ func (s *GRPCServer) Stop() {
 }
 
 // Stop gracefully stops the gRPC server
-func (s *GRPCServer) InitUser(_ context.Context, mono_token string) (*pb.ClientResponse, error) {
-	// Call the handler to initialize the user
-	s.Handler.InitUser(mono_token)
+func (s *GRPCServer) InitClient(_ context.Context, mono_token string) (*pb.ClientResponse, error) {
+	// Call the handler to initialize the client
+	err := s.Handler.InitClient(mono_token)
+	if err != nil {
+		return &pb.ClientResponse{
+			Success: false,
+			Message: "Failed to initialize client",
+		}, err
+	}
 
 	return &pb.ClientResponse{
 		Success: true,
-		Message: "User initialized successfully",
+		Message: "Client initialized successfully",
 	}, nil
 }

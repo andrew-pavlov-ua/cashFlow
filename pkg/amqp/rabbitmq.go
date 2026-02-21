@@ -19,7 +19,7 @@ type RabbitMQPublisher struct {
 
 const EXCHANGE = "events"
 const TransactionRoutingKey = "transaction.create"
-const AccountRoutingKey = "account.init"
+const ClientRoutingKey = "account.init"
 
 func NewRabbitMQPublisher(amqpDSN string) (*RabbitMQPublisher, error) {
 	logger.Info("Connecting to RabbitMQ...")
@@ -110,7 +110,7 @@ func (p *RabbitMQPublisher) Publish(routingKey string, msg proto.Message) error 
 		return fmt.Errorf("failed to publish: %w", err)
 	}
 
-	logger.Debugf("Published to EXCHANGE=%s, routingKey=%s", EXCHANGE, routingKey)
+	logger.Debugf("Published to Exchange=%s, routingKey=%s", EXCHANGE, routingKey)
 	return nil
 }
 
