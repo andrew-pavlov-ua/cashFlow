@@ -1,7 +1,46 @@
 package models
 
+import (
+	"fmt"
+	"time"
+)
+
+type MonoWebhook struct {
+	Type string `json:"type"`
+	Data struct {
+		Account       string             `json:"account"`
+		StatementItem TransactionRequest `json:"statementItem"`
+	} `json:"data"`
+}
+
+func (m MonoWebhook) PrettyLog() string {
+	tx := m.Data.StatementItem
+
+	return fmt.Sprintf(
+		`📩 Monobank Webhook Received
+	Type:        %s
+	Account:     %s
+	TxID:        %s
+	Amount:      %.2f
+	Currency:    %d
+	Balance:     %.2f
+	MCC:         %d
+	Description: %s
+	Time:        %s`,
+		m.Type,
+		m.Data.Account,
+		tx.ExternalId,
+		float64(tx.Amount)/100,
+		tx.CurrencyCode,
+		float64(tx.Balance)/100,
+		tx.MCC,
+		tx.Description,
+		time.Unix(tx.TransactionTime, 0).Format(time.RFC3339),
+	)
+}
+
 type TransactionRequest struct {
-	ExternalId      string `json:"id,omitempty"`
+	ExternalId      string `json:"id"`
 	Amount          int64  `json:"amount"`
 	Description     string `json:"description"`
 	CurrencyCode    int32  `json:"currencyCode,omitempty"`

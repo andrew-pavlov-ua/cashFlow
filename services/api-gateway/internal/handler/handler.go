@@ -12,7 +12,7 @@ import (
 
 type Handler struct {
 	RabbitMQPublisher *amqp.RabbitMQPublisher
-	Service           *clients.MonoClient
+	MonoClient        *clients.MonoClient
 }
 
 func NewHandler(amqpDSN string) *Handler {
@@ -23,19 +23,25 @@ func NewHandler(amqpDSN string) *Handler {
 
 	return &Handler{
 		RabbitMQPublisher: publisher,
-		Service:           clients.NewMonoClient(),
+		MonoClient:        clients.NewMonoClient(),
 	}
 }
 
-func (h *Handler) NewTransaction(c *gin.Context) {
-	var req models.TransactionRequest
+func (h *Handler) WebhookHandle(c *gin.Context) {
+	var req models.MonoWebhook
 	if err := c.ShouldBindJSON(&req); err != nil {
 		logger.Error("Failed to bind JSON request", err)
 		c.JSON(400, gin.H{"error": "Invalid request"})
 		return
 	}
 
-	msg := utils.TransactionRequestToProto(&req)
+	if req.Data.StatementItem.ExternalId == "" {
+		req.Data.StatementItem.ExternalId = req.Data.Account
+	}
+
+	logger.Info(req.PrettyLog())
+
+	msg := utils.TransactionRequestToProto(&req.Data.StatementItem)
 
 	// Publish the transaction to RabbitMQ
 	err := h.RabbitMQPublisher.Publish(amqp.EXCHANGE, msg)
@@ -49,8 +55,39 @@ func (h *Handler) NewTransaction(c *gin.Context) {
 	c.JSON(200, gin.H{"status": "Transaction processed successfully"})
 }
 
+func (h *Handler) NewClient(c *gin.Context) {
+	var req struct {
+		MonoToken string `json:"mono_token"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		logger.Error("Failed to bind JSON request", err)
+		c.JSON(400, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	err := h.InitClient(req.MonoToken)
+	if err != nil {
+		logger.Error("Failed to initialize client", err)
+		c.JSON(500, gin.H{"error": "Failed to initialize client"})
+		return
+	}
+
+	logger.Info("Client initialized successfully")
+
+	logger.Infof("Setting up MonoBank webhook for token: %s", req.MonoToken)
+	err = h.MonoClient.SetUpMonoWebhook(req.MonoToken)
+	if err != nil {
+		logger.Error("Failed to set up MonoBank webhook", err)
+		c.JSON(500, gin.H{"error": "Failed to set up MonoBank webhook"})
+		return
+	}
+	logger.Info("MonoBank webhook set up successfully")
+
+	c.JSON(200, gin.H{"status": "Client initialized successfully"})
+}
+
 func (h *Handler) InitClient(mono_token string) error {
-	clientData, err := h.Service.FetchClient(mono_token)
+	clientData, err := h.MonoClient.FetchClient(mono_token)
 	if err != nil {
 		return err
 	}
@@ -60,4 +97,9 @@ func (h *Handler) InitClient(mono_token string) error {
 
 	logger.Infof("Initializing client with mono_token: %s", mono_token)
 	return nil
+}
+
+func (h *Handler) WebhookConfirmation(c *gin.Context) {
+	// MonoBank webhook confirmation endpoint
+	c.String(200, "OK")
 }

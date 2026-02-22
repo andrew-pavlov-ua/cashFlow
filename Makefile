@@ -44,3 +44,13 @@ tidy:
 	(cd proto && go mod tidy)
 	(cd services/api-gateway && go mod tidy)
 	(cd services/notification-service && go mod tidy)
+
+rebuild-gateway:
+	docker compose -f deployments/docker-compose.yml --env-file .env build api-gateway
+	docker compose -f deployments/docker-compose.yml --env-file .env down api-gateway
+	docker compose -f deployments/docker-compose.yml --env-file .env up -d api-gateway
+
+rebuild-notification:
+	docker compose -f deployments/docker-compose.yml --env-file .env build notification-service
+	docker compose -f deployments/docker-compose.yml --env-file .env down notification-service
+	docker compose -f deployments/docker-compose.yml --env-file .env up -d notification-service

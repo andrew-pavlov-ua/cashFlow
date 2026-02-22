@@ -42,7 +42,9 @@ func (a *App) InitHTTPServer() {
 
 	r := gin.Default()
 
-	r.POST("/new-transaction", a.Handler.NewTransaction)
+	r.POST("/mono-webhook", a.Handler.WebhookHandle)
+	r.GET("/mono-webhook", a.Handler.WebhookConfirmation) // for mono webhook confirmation
+	r.POST("/new-client", a.Handler.NewClient)
 	// more post requests can be added here
 
 	// server/server-http init here to implement
