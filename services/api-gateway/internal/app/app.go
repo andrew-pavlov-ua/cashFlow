@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 
+	utils "github.com/andrew-pavlov-ua/pkg"
 	"github.com/andrew-pavlov-ua/pkg/logger"
 	"github.com/andrew-pavlov-ua/services/api-gateway/internal/handler"
 	"github.com/andrew-pavlov-ua/services/api-gateway/internal/server"
@@ -26,7 +27,9 @@ type App struct {
 	Handler      *handler.Handler
 }
 
-func NewApp(amqpDSN string) *App {
+func NewApp() *App {
+	amqpDSN := utils.Getenv("AMQP_DSN", "amqp://guest:guest@rabbitmq:5672/")
+
 	a := &App{Handler: handler.NewHandler(amqpDSN)}
 	a.InitHTTPServer()
 	a.InitGRPCServer()
@@ -35,6 +38,8 @@ func NewApp(amqpDSN string) *App {
 }
 
 func (a *App) InitHTTPServer() {
+	httpPort := utils.Getenv("REST_PORT", HTTPPort)
+
 	r := gin.Default()
 
 	r.POST("/new-transaction", a.Handler.NewTransaction)
@@ -43,13 +48,15 @@ func (a *App) InitHTTPServer() {
 	// server/server-http init here to implement
 
 	a.Server = &http.Server{
-		Addr:    HTTPPort,
+		Addr:    "0.0.0.0:" + httpPort,
 		Handler: r,
 	}
 }
 
 func (a *App) InitGRPCServer() {
-	lis, err := net.Listen("tcp", GRPCPort)
+	grpcPort := utils.Getenv("GRPC_PORT", GRPCPort)
+
+	lis, err := net.Listen("tcp", "0.0.0.0:"+grpcPort)
 	if err != nil {
 		logger.Fatal(err)
 	}
@@ -59,7 +66,7 @@ func (a *App) InitGRPCServer() {
 	grpcServer := server.NewGRPCServer(a.Handler)
 	grpcServer.RegisterServices(a.GRPCServer)
 
-	logger.Infof("gRPC server initialized on %s", GRPCPort)
+	logger.Infof("gRPC server initialized on %s", grpcPort)
 }
 
 func (a *App) Start() {
@@ -67,7 +74,7 @@ func (a *App) Start() {
 	defer stop()
 
 	go func() {
-		logger.Info("HTTP running on %s", HTTPPort)
+		logger.Infof("HTTP running on %s", a.Server.Addr)
 		err := a.Server.ListenAndServe()
 		if err != nil && err != http.ErrServerClosed {
 			logger.Panic("error creating app instance: ", err)
@@ -75,7 +82,7 @@ func (a *App) Start() {
 	}()
 
 	go func() {
-		logger.Info("gRPC running on %s", GRPCPort)
+		logger.Infof("gRPC running on %s", a.GRPCListener.Addr().String())
 		err := a.GRPCServer.Serve(a.GRPCListener)
 		if err != nil {
 			logger.Panic("error starting gRPC server: ", err)

@@ -1,7 +1,16 @@
 include .env
 export
 
-protoDir := "./proto"
+PG_DSN=postgres://$(PG_USER):$(PG_PASS)@$(PG_HOST):$(PG_PORT)/$(PG_DB_NAME)?sslmode=disable
+
+compose-up:
+	docker compose -f deployments/docker-compose.yml --env-file .env up
+
+compose-down:
+	docker compose -f deployments/docker-compose.yml down
+
+compose-build:
+	docker compose -f deployments/docker-compose.yml --env-file .env build
 
 generate-sqlc:
 	sqlc generate
@@ -29,3 +38,9 @@ install-proto-tools:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 	@echo "✓ Installed"
+
+tidy:
+	(cd pkg && go mod tidy)
+	(cd proto && go mod tidy)
+	(cd services/api-gateway && go mod tidy)
+	(cd services/notification-service && go mod tidy)

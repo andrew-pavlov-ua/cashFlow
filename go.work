@@ -3,9 +3,8 @@ go 1.25.7
 use (
 	./pkg
 	./proto
+	// ./services/account-service
+	// ./services/analytics-service
 	./services/api-gateway
-	./services/account-service
-	./services/bank-adapter
-	./services/analytics-service
 	./services/notification-service
 )

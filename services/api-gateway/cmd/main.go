@@ -26,17 +26,6 @@ func main() {
 	logger.Info("Starting API Gateway...")
 	logger.Infof("Environment: %s", env)
 
-	ampqDSN := Getenv("AMQP_DSN", "amqp://guest:guest@localhost:5672/")
-
-	a := app.NewApp(ampqDSN)
+	a := app.NewApp()
 	a.Start()
-}
-
-func Getenv(key, defaultValue string) string {
-	value := os.Getenv(key)
-	if value == "" {
-		logger.Warnf("Environment variable %s not set, using default value: %s", key, defaultValue)
-		return defaultValue
-	}
-	return value
 }

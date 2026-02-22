@@ -27,14 +27,13 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: cashflow
-      POSTGRES_USER: cashflow
-      POSTGRES_PASSWORD: cashflow123
+      POSTGRES_DB: ${PG_DB_NAME}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASS}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+      - ../db-data/postgres/:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cashflow"]
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d ${PG_DB_NAME}"]     
       interval: 10s
       timeout: 5s
       retries: 5
@@ -53,37 +52,62 @@ services:
       timeout: 5s
       retries: 5
 
-  # Migration runner
   migrations:
     build:
       context: .
-      dockerfile: Dockerfile.migrations
+      dockerfile: ./Dockerfile.migrations
     container_name: cashflow-migrations
+    env_file:
+      - ../.env
     depends_on:
       postgres:
         condition: service_healthy
-    environment:
-      - GOOSE_DRIVER=postgres
-      - GOOSE_DBSTRING=${PG_DSN}
-    command: ["postgres", "${PG_DSN}", "up"]
+    command:
+      [
+        "-dir", "/migrations",
+        "postgres",
+        "postgres://${PG_USER}:${PG_PASS}@${PG_HOST}:${PG_PORT}/${PG_DB_NAME}?sslmode=disable",
+        "up"
+      ]
     restart: "no"
+
+  # Migration runner based on goose-docker image (alternative to custom Dockerfile)
+  # migrations:
+  #   image: ghcr.io/kukymbr/goose-docker:3.26.0
+  #   container_name: cashflow-migrations
+  #   env_file:
+  #     - ../.env
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   environment:
+  #     - GOOSE_DRIVER=postgres
+  #     - GOOSE_DBSTRING=postgres://${PG_USER}:${PG_PASS}@${PG_HOST}:${PG_PORT}/${PG_DB_NAME}?sslmode=disable
+  #     - GOOSE_MIGRATION_DIR=/migrations
+  #   volumes:
+  #     - ./migrations:/migrations:ro
+  #   restart: "no"
 
   api-gateway:
     build: 
-      context: ../services/api-gateway
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: ./services/api-gateway/Dockerfile
     container_name: cashflow-api-gateway
     ports:
       - "${GATEWAY_REST_PORT}:8080" # API Gateway port
       - "${GATEWAY_GRPC_PORT}:50051" # API Gateway gRPC port
     environment:
-      PG_DSN: ${PG_DSN}
+      REST_PORT: 8080
+      GRPC_PORT: 50051
+      GATEWAY_HOST: ${GATEWAY_HOST}
       RD_HOST: ${RD_HOST}
       RD_PORT: ${RD_PORT}
       AMQP_DSN: ${AMQP_DSN}
-      MONO_TOKEN: ${MONO_TOKEN}
       ENV: ${ENV}
+    # restart: always
     depends_on:
+      migrations:
+        condition: service_completed_successfully
       rabbitmq:
         condition: service_healthy
       postgres:
@@ -91,9 +115,30 @@ services:
       redis:
         condition: service_healthy
 
-  configs:
-  rabbitmq-plugins:
-    content: "[rabbitmq_management]." 
+  notification-service:
+    build: 
+      context: ..
+      dockerfile: ./services/notification-service/Dockerfile
+    container_name: cashflow-notification-service
+    ports:
+      - "${TG_BOT_PORT}:8080" 
+    environment:
+      PORT: 8080
+      TG_BOT_TOKEN: ${TG_BOT_TOKEN}
+      RD_HOST: ${RD_HOST}
+      RD_PORT: ${RD_PORT}
+      AMQP_DSN: ${AMQP_DSN}
+      ENV: ${ENV}
+    # restart: always
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
 volumes:
   rabbitmq_data:

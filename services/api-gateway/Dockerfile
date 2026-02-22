@@ -1,27 +1,33 @@
-#base go image
+# Build stage
+FROM golang:1.25.7-alpine AS builder
+RUN apk add --no-cache git
 
-FROM golang:1.25.7-alpine as builder
+WORKDIR /build
+ENV GOWORK=off
 
-RUN mkdir /gateway
+# deps cache
+COPY services/api-gateway/go.mod services/api-gateway/go.sum ./services/api-gateway/
+COPY pkg/go.mod pkg/go.sum ./pkg/
+COPY proto/go.mod proto/go.sum ./proto/
+RUN cd services/api-gateway && go mod download
 
-COPY ./ /gateway
+# source
+COPY services/api-gateway ./services/api-gateway
+COPY pkg ./pkg
+COPY proto ./proto
 
-WORKDIR /gateway
+# build
+WORKDIR /build/services/api-gateway
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+  go build -ldflags="-w -s" -o /out/api-gateway ./cmd/main.go
 
-RUN CGO_ENABLED=0 go build -o zero ./cmd
 
-RUN chmod +x ./zero
-
-#build a tiny docker image
+# Runtime stage
 FROM alpine:latest
+RUN apk add --no-cache ca-certificates tzdata
 
-# Install ca-certificates for HTTPS requests
-RUN apk --no-cache add ca-certificates
+WORKDIR /app
+COPY --from=builder /out/api-gateway ./api-gateway
 
-RUN mkdir /gateway
-
-COPY --from=builder /gateway /gateway
-
-WORKDIR /gateway
-
-CMD ["/gateway/zero"]
+EXPOSE 8080 50051
+CMD ["./api-gateway"]

@@ -1,11 +1,13 @@
 FROM alpine:latest
 
-# Install goose
-RUN apk add --no-cache curl bash postgresql-client && \
-    curl -fsSL https://raw.githubusercontent.com/pressly/goose/master/install.sh | sh
+RUN apk add --no-cache curl ca-certificates postgresql-client
+
+ARG GOOSE_VERSION=v3.24.1
+RUN curl -L -o /usr/local/bin/goose \
+  "https://github.com/pressly/goose/releases/download/${GOOSE_VERSION}/goose_linux_x86_64" \
+  && chmod +x /usr/local/bin/goose
 
 WORKDIR /migrations
-
 COPY ./migrations /migrations
 
-ENTRYPOINT ["goose"]
+ENTRYPOINT ["/usr/local/bin/goose"]
